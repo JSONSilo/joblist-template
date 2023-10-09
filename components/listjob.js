@@ -1,51 +1,51 @@
 import Image from "next/image";
 
 
-export default function ListJob() {
+export default function ListJob({data}) {
   
-  
-    const numberOfTimes = 100; // Change this to the number of times you want to loop
-    const cardElements = [];
-  
-    for (let i = 0; i < numberOfTimes; i++) {
-      cardElements.push(
-        <div className="card bg-base-100 border rounded-md" key={i}>
-          {/* <figure><Image src="#" alt="Shoes" /></figure> */}
-          <div className="card-body">
-            <div className="avatar">
-              <div className="w-20 rounded-xl">
-                <Image src="https://raw.githubusercontent.com/rdimascio/icons/master/icons/facebook.svg" alt="company avatar" width={50} height={50}/>
-              </div>
-            </div>
-            <h2 className="card-title font-extrabold">
-              Project Manager
-              <div className="badge bg-red-500 text-white text-sm">Feature</div>
-            </h2>
-            
-            <p className=" font-light">
-              Microsoft
-              <span className="ml-2 text-gray-400 font-light">Remote &#x2022; Fulltime</span>
-            </p>
-            <p>Malaysia</p>
-            {/* <p className=" text-gray-400">Remote &#x2022; Fulltime</p> */}
-            <p className=" text-green-600 font-light">$1000 - $2000</p>
-            <div className="card-actions justify-end">
-              {/* <div className="badge badge-outline">Apply</div>  */}
-              <a href="#" className="btn btn-mb btn-neutral">Apply</a>
-              {/* <div className="badge badge-outline">Products</div> */}
-            </div>
-          </div>
-        </div>
-      );
-    
-  
-    
-  }
-
   return (
     <div className="container mx-auto">
       <div className="grid grid-cols-3 gap-4">
-        {cardElements}
+        {data && data.map((v,k)=> (
+          <>
+            <div className="card bg-base-100 border rounded-md" key={k}>
+              <div className="card-body">
+                <Image src={v.avatar} alt={v.company} width={60} height={60}/>
+                <h2 className="card-title font-extrabold">
+                  {v.title}
+                  {v.is_feature ? (
+                      <div className="badge bg-red-500 text-white text-sm">Feature</div>
+                  ):''}
+                </h2>
+                <p className=" font-light">
+                  {v.company}
+                  <span className="ml-2 text-gray-400 font-light">{v.remote ? "Remote \u2022 ":''}{v.type.charAt(0).toUpperCase() + v.type.slice(1)}</span>
+                </p>
+                <p>{v.location}</p>
+                <p className=" text-green-600 font-light">{v.salary}</p>
+                <div className="card-actions justify-end">
+                  <button href="#" className="btn btn-mb btn-neutral" onClick={()=>document.getElementById(k).showModal()}>Apply</button>
+                </div>
+              </div>
+            </div>
+            <dialog id={k} className="modal modal-bottom sm:modal-middle">
+              <div className="modal-box">
+                <h3 className="font-bold text-lg">{v.title}</h3>
+                <p className="py-4">{v.description}</p>
+                  <ol class="list-inside list-decimal">
+                    {v.requirements.map((v, k)=> (
+                      <li key={k}>{v}</li>          
+                    ))}
+                  </ol>
+                <div className="modal-action">
+                  <form method="dialog">
+                    <button className="btn">Close</button>
+                  </form>
+                </div>
+              </div>
+            </dialog>
+          </>
+        ))}
       </div>
     </div>
   );
