@@ -1,22 +1,38 @@
+import Bar from "@/components/bar"
+import Footer from "@/components/footer"
 import ListJob from "@/components/listjob"
 import SearchJob from "@/components/searchjob"
 import axios from "axios"
+import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
 
 export default function Home() {
+  const searchParams = useSearchParams()
   const [isLoading, setLoading] = useState(false)
-  const [data, setData] = useState()
+  const [rawData, setRawData] = useState()
+  
+  let data = []
+  const q = searchParams.get('search')
 
   const handleJobList = async () => {
     setLoading(true)
     axios.get("https://api.jsonsilo.com/public/e768587a-40e5-4477-8cd3-58c301c27da0").then((res)=> {
-      setData(res.data)
+      setRawData(res.data)
       setLoading(false)
     }).catch((err)=> {
       alert(err);
       setLoading(false)
     })
+  }
+
+
+  if (rawData && rawData.length !== 0 && q !== null) {
+    data = rawData.filter(job => {
+      return job.title.toLowerCase().includes(q.toLowerCase())
+    })
+  } else {
+    data = rawData;
   }
 
   useEffect(() => {
@@ -25,12 +41,16 @@ export default function Home() {
 
   return (
     <>
-      <SearchJob />
+      <SearchJob data={data}/>
+      <Bar q={q} total={data && data.length}/>
+      <div className="pb-40">
       {isLoading ? (
         <div className="flex items-center justify-center py-10">
           <span className="loading loading-dots loading-lg"></span>
         </div>
       ): <ListJob data={data}/>}
+      </div>
+      <Footer />
     </>
   )
 }
