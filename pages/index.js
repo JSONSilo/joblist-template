@@ -17,7 +17,7 @@ export default function Home() {
 
   const handleJobList = async () => {
     setLoading(true)
-    axios.get("https://api.jsonsilo.com/public/e768587a-40e5-4477-8cd3-58c301c27da0").then((res)=> {
+    axios.get(process.env.NEXT_PUBLIC_API_SILO_URL).then((res)=> {
       setRawData(res.data)
       setLoading(false)
     }).catch((err)=> {
